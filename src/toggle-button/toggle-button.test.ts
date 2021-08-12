@@ -211,4 +211,25 @@ describe('Toggle Button', () => {
 
     expect(pressedCount).to.equal(3);
   });
+
+  it('manages pointer events', async () => {
+    const el = await fixture<ToggleButton>(
+      html`<fmn-toggle-button>Toggle</fmn-toggle-button>`
+    );
+
+    el.dispatchEvent(new PointerEvent('pointerup', { button: 0 }));
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.true;
+
+    el.dispatchEvent(new PointerEvent('pointerup', { button: 0 }));
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.false;
+
+    el.dispatchEvent(new PointerEvent('pointerup', { button: 2 }));
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.false;
+  });
 });

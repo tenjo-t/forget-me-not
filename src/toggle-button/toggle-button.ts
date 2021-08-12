@@ -40,8 +40,8 @@ export class ToggleButton extends FocusableElement {
     }
   }
 
-  private handlePointerup() {
-    if (this.disabled) {
+  private handlePointerup(e: PointerEvent) {
+    if (this.disabled || e.button !== 0) {
       return;
     }
     this.handlePressed();
