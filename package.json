@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -11,7 +10,7 @@
     "test": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium",
     "test:watch": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium --watch",
     "storybook": "web-dev-server --config .storybook/server.config.mjs",
-    "storybook:watch": "web-dev-server --config .storybook/server.config.js --watch"
+    "storybook:watch": "web-dev-server --config .storybook/server.config.mjs --watch"
   },
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
