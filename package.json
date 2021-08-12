@@ -1,0 +1,36 @@
+{
+  "name": "forget-me-not",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "fmt": "prettier --write .",
+    "test": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium",
+    "test:watch": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium --watch",
+    "storybook": "web-dev-server --config .storybook/server.config.mjs",
+    "storybook:watch": "web-dev-server --config .storybook/server.config.js --watch"
+  },
+  "devDependencies": {
+    "@open-wc/eslint-config": "^4.3.0",
+    "@open-wc/testing": "^2.5.33",
+    "@storybook/web-components": "^6.3.7",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.1",
+    "@web/dev-server": "^0.1.20",
+    "@web/dev-server-esbuild": "^0.2.12",
+    "@web/dev-server-storybook": "^0.3.7",
+    "@web/test-runner": "^0.13.15",
+    "@web/test-runner-playwright": "^0.8.6",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "lit-html": "^1.4.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "lit": "^2.0.0-rc.2"
+  }
+}
