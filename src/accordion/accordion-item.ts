@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import type { TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 
-import { isValidKeyboardEvent } from '../shared/press';
+import { isEnter, isSpace, isMainButton } from '../shared/press';
 
 export class AccordionItem extends LitElement {
   static styles = css`
@@ -25,22 +25,45 @@ export class AccordionItem extends LitElement {
   @property({ type: Boolean, reflect: true, attribute: 'aria-disabled' })
   public disabled = false;
 
+  @query('#button')
+  private focusElement!: HTMLButtonElement;
+
   public focus(option?: FocusOptions): void {
-    (this.renderRoot.querySelector('#button') as HTMLButtonElement).focus(
-      option
-    );
+    this.focusElement.focus(option);
   }
 
   private handlePointerup(e: PointerEvent) {
-    if (this.disabled || e.button !== 0) return;
-
-    this.open = !this.open;
+    if (this.disabled || !isMainButton(e)) {
+      return;
+    }
+    this.handleOpen();
   }
 
   private handleKeypress(e: KeyboardEvent) {
-    if (isValidKeyboardEvent(e)) {
-      this.open = !this.open;
+    if (this.disabled || !isEnter(e)) {
+      return;
     }
+    this.handleOpen();
+  }
+
+  private handleKeydown = (e: KeyboardEvent) => {
+    if (this.disabled || !isSpace(e)) {
+      return;
+    }
+    e.preventDefault();
+    this.focusElement.addEventListener('keyup', this.handleKeyup);
+  };
+
+  private handleKeyup = (e: KeyboardEvent) => {
+    if (this.disabled || !isSpace(e)) {
+      return;
+    }
+    this.focusElement.removeEventListener('keyup', this.handleKeyup);
+    this.handleOpen();
+  };
+
+  private handleOpen() {
+    this.open = !this.open;
   }
 
   protected render(): TemplateResult {
@@ -54,6 +77,7 @@ export class AccordionItem extends LitElement {
           ?disabled=${this.disabled}
           @pointerup=${this.handlePointerup}
           @keypress=${this.handleKeypress}
+          @keydown=${this.handleKeydown}
           part="button"
         >
           ${this.label}
