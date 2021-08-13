@@ -3,7 +3,7 @@ import type { TemplateResult, PropertyValues } from 'lit';
 import { property, queryAssignedNodes } from 'lit/decorators.js';
 
 import { AccordionItem } from './accordion-item';
-import { isValidKeyboardEvent } from '../shared/press';
+import { isEnter, isSpace, isMainButton } from '../shared/press';
 
 export class Accordion extends LitElement {
   @property({ type: Boolean })
@@ -23,49 +23,65 @@ export class Accordion extends LitElement {
     if (items && !items.length) {
       return;
     }
-    this.addEventListener('keydown', this.handleKeydown);
+    this.addEventListener('keydown', this.handleArrowKey);
   }
 
   private stopListeningToKeyboard(): void {
-    this.removeEventListener('keydown', this.handleKeydown);
+    this.removeEventListener('keydown', this.handleArrowKey);
   }
 
-  private handleKeydown(e: KeyboardEvent): void {
-    const { code, target } = e;
+  private handleArrowKey(e: KeyboardEvent): void {
+    const { key, target } = e;
     if (!(target instanceof AccordionItem)) {
       return;
     }
-    if (code === 'ArrowDown' || code === 'ArrowUp') {
+    if (key === 'ArrowDown' || key === 'ArrowUp') {
       e.preventDefault();
-      this.focusItemByOffset(target, code === 'ArrowDown' ? 1 : -1);
-    }
-    if (code === 'Home' || code === 'End') {
+      this.focusItemByOffset(target, key === 'ArrowDown' ? 1 : -1);
+    } else if (key === 'Home' || key === 'End') {
       e.preventDefault();
       const { items } = this;
-      items[code === 'Home' ? 0 : items.length - 1].focus();
+      items[key === 'Home' ? 0 : items.length - 1].focus();
     }
   }
 
   private focusItemByOffset(el: AccordionItem, direction: number): void {
     const { items } = this;
     const focused = items.indexOf(el);
-    const next = (items.length + focused + direction) % items.length;
-    const nextItem = items[next];
-    if (!nextItem || nextItem.disabled || next === focused) {
+    let next = (items.length + focused + direction) % items.length;
+    let nextItem = items[next];
+    while (nextItem.disabled) {
+      next = (items.length + next + direction) % items.length;
+      nextItem = items[next];
+    }
+    if (next === focused) {
       return;
     }
     nextItem.focus();
   }
 
   private handlePointerup(e: PointerEvent) {
-    if (e.button !== 0) {
+    if (!isMainButton(e)) {
       return;
     }
     this.toggleItem(e.target);
   }
 
   private handleKeypress(e: KeyboardEvent) {
-    if (isValidKeyboardEvent(e)) {
+    if (isEnter(e)) {
+      this.toggleItem(e.target);
+    }
+  }
+
+  private handleKeydown(e: KeyboardEvent) {
+    if (isSpace(e)) {
+      this.addEventListener('keyup', this.handleKeyup);
+    }
+  }
+
+  private handleKeyup(e: KeyboardEvent) {
+    if (isSpace(e)) {
+      this.removeEventListener('keyup', this.handleKeyup);
       this.toggleItem(e.target);
     }
   }
@@ -92,5 +108,6 @@ export class Accordion extends LitElement {
     this.addEventListener('focusout', this.stopListeningToKeyboard);
     this.addEventListener('pointerup', this.handlePointerup);
     this.addEventListener('keypress', this.handleKeypress);
+    this.addEventListener('keydown', this.handleKeydown);
   }
 }
