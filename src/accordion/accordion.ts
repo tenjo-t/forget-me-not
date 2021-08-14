@@ -61,10 +61,9 @@ export class Accordion extends LitElement {
   }
 
   private handlePointerup(e: PointerEvent) {
-    if (!isMainButton(e)) {
-      return;
+    if (isMainButton(e)) {
+      this.toggleItem(e.target);
     }
-    this.toggleItem(e.target);
   }
 
   private handleKeypress(e: KeyboardEvent) {
