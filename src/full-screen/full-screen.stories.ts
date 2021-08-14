@@ -1,6 +1,6 @@
 import { Story } from '@storybook/web-components';
 import { html } from 'lit-html';
-import './index.ts';
+import './index';
 
 export default {
   title: 'Full Screen',
