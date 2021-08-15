@@ -4,13 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "tsc": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "fmt": "prettier --write .",
     "test": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium",
     "test:watch": "web-test-runner \"src/*/*.test.ts\" --node-resolve --playwright chromium --watch",
     "storybook": "web-dev-server --config .storybook/server.config.mjs",
-    "storybook:watch": "web-dev-server --config .storybook/server.config.mjs --watch"
+    "storybook:watch": "web-dev-server --config .storybook/server.config.mjs --watch",
+    "storybook:build": "tsc --build .storybook-build/tsconfig.json && build-storybook --config-dir .storybook-build --output-dir .storybook-build/dist"
   },
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",

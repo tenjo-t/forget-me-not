@@ -2,7 +2,7 @@
 /* eslint-disable lit-a11y/no-autofocus */
 import { Story } from '@storybook/web-components';
 import { html } from 'lit-html';
-import './index.ts';
+import './index';
 
 type Props = {
   disabled: boolean;
