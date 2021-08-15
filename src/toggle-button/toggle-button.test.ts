@@ -1,4 +1,14 @@
 import { html, fixture, expect, elementUpdated } from '@open-wc/testing';
+import {
+  enterEvent,
+  spaceEvent,
+  spaceDownEvent,
+  spaceUpEvent,
+  gDownEvent,
+  gUpEvent,
+  mainButtonUpEvent,
+  secondaryButtonUpEvent,
+} from '../../test/utils';
 import { ToggleButton } from './toggle-button';
 import './index.ts';
 
@@ -33,12 +43,15 @@ describe('Toggle Button', () => {
   it('manages "disabled"', async () => {
     let clickedCount = 0;
     const el = await fixture<ToggleButton>(
-      html`<fmn-toggle-button
-        @click=${() => {
-          clickedCount += 1;
-        }}
-        >Toggle</fmn-toggle-button
-      >`
+      html`
+        <fmn-toggle-button
+          @click=${() => {
+            clickedCount += 1;
+          }}
+        >
+          Toggle
+        </fmn-toggle-button>
+      `
     );
 
     expect(el.hasAttribute('aria-disabled'), 'initially not').to.be.false;
@@ -106,109 +119,58 @@ describe('Toggle Button', () => {
     };
     await elementUpdated(el);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keypress', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Enter',
-        key: 'Enter',
-      })
-    );
+    el.dispatchEvent(enterEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(1);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keypress', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
+    el.dispatchEvent(spaceEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(1);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
-    el.dispatchEvent(
-      new KeyboardEvent('keyup', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
+    el.dispatchEvent(spaceDownEvent);
+    el.dispatchEvent(spaceUpEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(2);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
-    el.dispatchEvent(
-      new KeyboardEvent('keyup', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'KeyG',
-        key: 'g',
-      })
-    );
+    el.dispatchEvent(spaceDownEvent);
+    el.dispatchEvent(gUpEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(2);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keyup', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
+    el.dispatchEvent(spaceUpEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(3);
 
-    el.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'KeyG',
-        key: 'g',
-      })
-    );
-    el.dispatchEvent(
-      new KeyboardEvent('keyup', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        code: 'Space',
-        key: ' ',
-      })
-    );
+    el.dispatchEvent(gDownEvent);
+    el.dispatchEvent(spaceUpEvent);
     await elementUpdated(el);
 
     expect(pressedCount).to.equal(3);
+  });
+
+  it('manages pointer events', async () => {
+    const el = await fixture<ToggleButton>(
+      html`<fmn-toggle-button>Toggle</fmn-toggle-button>`
+    );
+
+    el.dispatchEvent(mainButtonUpEvent);
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.true;
+
+    el.dispatchEvent(mainButtonUpEvent);
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.false;
+
+    el.dispatchEvent(secondaryButtonUpEvent);
+    await elementUpdated(el);
+
+    expect(el.pressed).to.be.false;
   });
 });

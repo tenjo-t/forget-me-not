@@ -1,0 +1,22 @@
+name: Run test
+
+on: pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: yarn
+
+    - name: Install deps
+      run: yarn install --frozen-lockfile
+
+    - name: Setup playwright
+      run: npx playwright install-deps chromium
+      
+    - name: Run test
+      run: yarn test

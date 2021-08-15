@@ -4,6 +4,7 @@ import { property } from 'lit/decorators.js';
 
 import { FocusableElement } from '../shared/focusable';
 import type { DisabledElement } from '../shared/focusable';
+import { isEnter, isSpace, isMainButton } from '../shared/press';
 
 export class ToggleButton extends FocusableElement {
   static styles = css`
@@ -40,40 +41,34 @@ export class ToggleButton extends FocusableElement {
     }
   }
 
-  private handlePointerup() {
-    if (this.disabled) {
+  private handlePointerup(e: PointerEvent) {
+    if (this.disabled || !isMainButton(e)) {
       return;
     }
     this.handlePressed();
   }
 
   private handleKeypress(e: KeyboardEvent) {
-    if (this.disabled) {
+    if (this.disabled || !isEnter(e)) {
       return;
     }
-    if (e.key === 'Enter') {
-      this.handlePressed();
-    }
+    this.handlePressed();
   }
 
   private handleKeydown(e: KeyboardEvent) {
-    if (this.disabled) {
+    if (this.disabled || !isSpace(e)) {
       return;
     }
-    if (e.key === ' ') {
-      e.preventDefault();
-      this.addEventListener('keyup', this.handleKeyup);
-    }
+    e.preventDefault();
+    this.addEventListener('keyup', this.handleKeyup);
   }
 
   private handleKeyup(e: KeyboardEvent) {
-    if (this.disabled) {
+    if (this.disabled || !isSpace(e)) {
       return;
     }
-    if (e.key === ' ') {
-      this.removeEventListener('keyup', this.handleKeyup);
-      this.handlePressed();
-    }
+    this.removeEventListener('keyup', this.handleKeyup);
+    this.handlePressed();
   }
 
   private handlePressed() {
