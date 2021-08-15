@@ -1,6 +1,6 @@
 import { Story } from '@storybook/web-components';
 import { html, TemplateResult } from 'lit-html';
-import './index.ts';
+import './index';
 
 type Props = {
   disabled: boolean;
